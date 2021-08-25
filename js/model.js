@@ -3,12 +3,12 @@ export default class Model {
         this.view = null;
         if(!this.todos || this.todos.length < 1){
              this.todos = [
-                 {
-                     id: 0,
-                     title: '',
-                     description: '',
-                 }
-                    //  completed: false
+                //  {
+                //      id: 0,
+                //      title: '',
+                //      description: '',
+                //  }
+                //     //  completed: false
             ]
             this.idAct = 1;    
         }else {
@@ -27,20 +27,17 @@ export default class Model {
 
     findTodo(id) {
         return this.todos.findIndex((todo) => todo.id === id);
-
     }
 
     toggleCompleted(id) {
         const index = this.findTodo(id);
         const todo = this.todos[index];
         todo.completed = !todo.completed; // invierto el checkbox
-        this.save();
     }
 
-    aditTodoo(id, values) {
+    aditTodo(id, values) {
         const index = this.findTodo(id);
         Object.assign(this.todos[index], values); // creo un nuevo objeto
-        this.save();
     }
 
     addTodo(title, description) {
@@ -53,7 +50,6 @@ export default class Model {
         }
         this.todos.push(todo);
         console.log(this.todos);
-        this.save();
         return {...todo}; // spread operator
     }
 
@@ -61,6 +57,5 @@ export default class Model {
     // findIndex() devuelve el índice del primer elemento de un array que cumpla con la función de prueba proporcionada
         const i = this.findTodo(id);
         this.todos.splice(i, 1);
-        this.save();
     }
 }

@@ -2,13 +2,30 @@ import AddTodo from './components/add-todo.js';
 
 export default class View {
     constructor() {
+        this.model = null;
         this.table = document.getElementById('table');
         this.addTodoForm = new AddTodo();
         
+        this.addTodoForm.onClick((title, description) => this.addTodoo(title, description));
     }
 
     setModel(model){ 
         this.model = model;
+    }
+
+    addTodoo(title, description) {
+        const todo = this.model.addTodo(title, description);
+        this.createRow(todo);
+        this.addTodoForm.clearInputs();
+    }
+
+    toggleCompleted(id) {
+        this.model.toggleCompleted(id);
+    }
+
+    removeTodo(id) {
+        document.getElementById(id).remove();
+        this.model.removeTodo(id);
     }
 
     render(){
@@ -16,32 +33,6 @@ export default class View {
         todos.forEach((todo) =>  this.createRow(todo));
     }
 
-    addFilters(filters) {
-        const {type, words} = filters; // type = filters.type - word = filters.word
-        // [, ...rows] -> con la , indico que el primer elemento no lo quiero
-        const [, ...rows] = this.table.getElementsByTagName('tr');
-        for (const row of rows) {
-            // es igual a poner: const title = row.children[0]
-            const [title, description, completed] = row.children;
-            let shouldHide = false;
-            if(words) {
-                shouldHide = !title.innerText.includes(words) && !description.innerText.includes(words);
-            }
-            const shouldBeCompleted = type === 'completed';
-            const isCompleted = completed.children[0].checked;
-            
-            if((type !== 'all') && (shouldBeCompleted !== isCompleted)) {
-                shouldHide = true;
-            }
-
-            if(shouldHide) {
-                row.classList.add('d-none'); // escondo
-            }else{
-                row.classList.remove('d-none');
-            }
-            
-        }
-    }
 
 
     createRow(todo) {
@@ -58,8 +49,14 @@ export default class View {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = todo.completed;
+        checkbox.onclick = () => this.toggleCompleted(todo.id);
         row.children[2].appendChild(checkbox); // añado a la 2 posicion de la tabla el checkbox actualizado
 
+        const removeBtn = document.createElement('button');
+        removeBtn.classList.add('btn', 'btn-danger', 'mb-1', 'ml-1');
+        removeBtn.innerHTML = '<i class = "fa fa-trash"></i>';
+        removeBtn.onclick = () => this.removeTodo(todo.id);
+        row.children[3].appendChild(removeBtn);
     }
                 
 }
